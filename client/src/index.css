@@ -6,3 +6,8 @@
   padding: 0;
   font-family: "Urbanist", sans-serif;
 }
+
+a {
+  text-decoration: none;
+  color: inherit;
+}

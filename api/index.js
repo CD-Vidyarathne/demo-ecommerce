@@ -9,7 +9,7 @@ import cartRoute from "./routes/cart.js";
 import orderRoute from "./routes/order.js";
 import checkoutRoute from "./routes/checkout.js";
 
-dotenv.config();
+dotenv.config({ path: "./.env" });
 
 const app = express();
 

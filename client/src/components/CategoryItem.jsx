@@ -1,15 +1,18 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { mobile } from "../responsive";
 
 const CategoryItem = ({ category }) => {
   return (
     <Container>
-      <Image src={category.img} />
-      <Info>
-        <Title>{category.title}</Title>
-        <Button>SHOP NOW</Button>
-      </Info>
+      <Link to={`/products/${category.cat}`}>
+        <Image src={category.img} />
+        <Info>
+          <Title>{category.title}</Title>
+          {/* <Button>SHOP NOW</Button> */}
+        </Info>
+      </Link>
     </Container>
   );
 };
@@ -43,15 +46,19 @@ const Info = styled.div`
 const Title = styled.h1`
   color: white;
   margin-bottom: 20px;
+  border: 1px solid white;
+  box-shadow: 0px 5px 10px white;
+  background-color: #0000007f;
+  padding: 5px;
 `;
-const Button = styled.button`
-  padding: 10px;
-  font-size: 20px;
-  background-color: white;
-  cursor: pointer;
-  color: grey;
-  border: 2px solid transparent;
-  &:hover {
-    border: 2px solid grey;
-  }
-`;
+// const Button = styled.button`
+//   padding: 10px;
+//   font-size: 20px;
+//   background-color: white;
+//   cursor: pointer;
+//   color: grey;
+//   border: 2px solid transparent;
+//   &:hover {
+//     border: 2px solid grey;
+//   }
+// `;

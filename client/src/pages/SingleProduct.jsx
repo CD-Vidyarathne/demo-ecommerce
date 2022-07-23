@@ -1,57 +1,118 @@
 import { Add, Remove } from "@mui/icons-material";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 import Announcements from "../components/Announcements";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import Newsletter from "../components/Newsletter";
+import { addProduct } from "../redux/cartRedux";
+import { publicRequest } from "../requestMethods";
 import { mobile } from "../responsive";
 
 const SingleProduct = () => {
+  const location = useLocation();
+  const id = location.pathname.split("/")[2];
+
+  const [product, setProduct] = useState({});
+  const [quantity, setQuantity] = useState(1);
+  const [color, setColor] = useState("");
+  const [size, setSize] = useState("");
+
+  const dispatch = useDispatch();
+
+  const handleQuantity = (o) => {
+    if (o === "-" && quantity > 1) {
+      setQuantity((prev) => prev - 1);
+    } else if (o === "+") {
+      setQuantity((prev) => prev + 1);
+    }
+  };
+
+  const handleColor = (c, event) => {
+    setColor(c);
+    const clickedColor = event.target;
+    const activeColor = clickedColor.parentElement.querySelector(".active");
+    if (activeColor) activeColor.classList.remove("active");
+    clickedColor.classList.add("active");
+  };
+
+  const handleCart = () => {
+    if (!color || !size) {
+      window.alert("Please select colour and size!");
+    } else if (color && size) {
+      const addToCartProduct = {
+        productId: product._id,
+        productName: product.title,
+        productSize: size,
+        productColor: color,
+        productPrice: product.price,
+        productQuantity: quantity,
+        productImage: product.image,
+      };
+      dispatch(addProduct(addToCartProduct));
+    }
+  };
+
+  useEffect(() => {
+    const getProduct = async () => {
+      try {
+        const res = await publicRequest.get(`/products/find/${id}`);
+
+        setProduct(res.data);
+      } catch {}
+    };
+    getProduct();
+  }, [id]);
+
   return (
     <Container>
       <Navbar />
       <Announcements />
       <Wrapper>
         <ImageContainer>
-          <Image src="https://i.pinimg.com/564x/d5/77/a7/d577a769417eef199eb076d2fb7d1f91.jpg" />
+          <Image src={product.image} />
         </ImageContainer>
         <InfoContainer>
-          <Title>Demo Outfit</Title>
-          <Description>
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-            Exercitationem, eos ipsam. Aut similique est corporis sunt magni
-            veritatis corrupti eaque hic tenetur! Totam optio fugiat et
-            voluptatem! Odio impedit doloribus earum fugit laborum alias in
-            dicta deleniti. Provident totam quia dolor autem esse, maxime earum
-            molestiae laborum, possimus rerum expedita.
-          </Description>
-          <Price>$ 20</Price>
+          <Title>{product.title}</Title>
+          <Description>{product.description}</Description>
+          <Price>$ {product.price}</Price>
           <FilterContainer>
             <Filter>
               <FilterTitle>Color</FilterTitle>
-              <FilterColor color="black" />
-              <FilterColor color="darkblue" />
-              <FilterColor color="gray" />
+              {product.color?.map((c) => (
+                <FilterColor
+                  color={c}
+                  key={c}
+                  onClick={(event) => handleColor(c, event)}
+                />
+              ))}
             </Filter>
             <Filter>
               <FilterTitle>Size</FilterTitle>
-              <FilterSize>
-                <FilterSizeOption>XS</FilterSizeOption>
-                <FilterSizeOption>S</FilterSizeOption>
-                <FilterSizeOption>M</FilterSizeOption>
-                <FilterSizeOption>L</FilterSizeOption>
-                <FilterSizeOption>XL</FilterSizeOption>
+
+              <FilterSize onChange={(e) => setSize(e.target.value)}>
+                <FilterSizeOption
+                  disabled
+                  defaultValue={null}
+                  defaultChecked={true}
+                >
+                  --
+                </FilterSizeOption>
+                {product.size?.map((s) => (
+                  <FilterSizeOption key={s}>{s}</FilterSizeOption>
+                ))}
               </FilterSize>
             </Filter>
           </FilterContainer>
           <AddContainer>
             <AmountContainer>
-              <Remove />
-              <Amount>1</Amount>
-              <Add />
+              <Remove onClick={() => handleQuantity("-")} />
+              <Amount>{quantity}</Amount>
+              <Add onClick={() => handleQuantity("+")} />
             </AmountContainer>
-            <Button>Add to Cart</Button>
+            <Button onClick={handleCart}>Add to Cart</Button>
           </AddContainer>
         </InfoContainer>
       </Wrapper>
@@ -126,8 +187,13 @@ const FilterColor = styled.div`
   height: 20px;
   border-radius: 50%;
   background-color: ${(props) => props.color};
+  border: 1px solid #666;
   margin: 0 5px;
   cursor: pointer;
+
+  &.active {
+    box-shadow: 0px 0px 3px 3px rgba(0, 0, 0, 0.5);
+  }
 `;
 
 const FilterSize = styled.select`

@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 import {
   FavoriteBorderOutlined,
   SearchOutlined,
@@ -10,13 +11,15 @@ const Product = ({ product }) => {
   return (
     <Container>
       <Circle />
-      <Image src={product.img} />
+      <Image src={product.image} />
       <Info>
         <Icon>
           <ShoppingCartOutlined />
         </Icon>
         <Icon>
-          <SearchOutlined />
+          <Link to={`/product/${product._id}`}>
+            <SearchOutlined />
+          </Link>
         </Icon>
         <Icon>
           <FavoriteBorderOutlined />

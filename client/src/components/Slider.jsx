@@ -6,10 +6,7 @@ import { mobile } from "../responsive";
 
 const Slider = () => {
   const [sliderIndex, setSliderIndex] = useState(0);
-  const [bgColor, setBgColor] = useState(true);
-
   const handleClick = (direction) => {
-    setBgColor(!bgColor);
     if (direction === "left") {
       setSliderIndex(sliderIndex > 0 ? sliderIndex - 1 : 2);
     }
@@ -26,7 +23,7 @@ const Slider = () => {
       <Wrapper>
         {sliderItems.map((item) => {
           return (
-            <Slide bgColor={bgColor} key={item.id} sliderIndex={sliderIndex}>
+            <Slide key={item.id} sliderIndex={sliderIndex}>
               <ImageContainer>
                 <Image src={item.imageURL} alt="Slide-Img" />
               </ImageContainer>
@@ -92,7 +89,7 @@ const Slide = styled.div`
   display: flex;
   align-items: center;
   text-transform: uppercase;
-  background-color: ${(props) => (props.bgColor ? "#FBCAFF" : "#FFADF0")};
+  background-color: "#ebeefd";
   transform: translateX(${(props) => props.sliderIndex * -100}vw);
   transition: all 1.5s ease;
 `;
